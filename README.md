@@ -1,4 +1,4 @@
-[![Build status](https://travis-ci.org/jasvrcek/ICS.svg?branch=master)](https://travis-ci.org/jasvrcek/ICS)
+[![Build status](https://travis-ci.org/milan-mimra/ics.svg?branch=master)](https://travis-ci.org/milan-mimra/ics)
 
 ICS
 ===
