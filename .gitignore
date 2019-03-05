@@ -5,3 +5,6 @@
 vendor
 composer.lock
 phpunit.xml
+/docker
+docker-compose.yml
+/var
