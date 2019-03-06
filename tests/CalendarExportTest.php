@@ -2,10 +2,10 @@
 
 namespace Jsvrcek\ICS;
 
+use DateInterval;
+use DateTime;
+use DateTimeZone;
 use Jsvrcek\ICS\Model\CalendarAlarm;
-use Jsvrcek\ICS\Model\Recurrence\DataType\Weekday;
-use Jsvrcek\ICS\Model\Recurrence\DataType\WeekdayNum;
-use Jsvrcek\ICS\Model\Recurrence\DataType\Frequency;
 use Jsvrcek\ICS\Model\Relationship\Organizer;
 use Jsvrcek\ICS\Utility\Formatter;
 use Jsvrcek\ICS\Model\Relationship\Attendee;
@@ -20,7 +20,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStream()
     {
-        $timezone = new \DateTimeZone('Antarctica/McMurdo');
+        $timezone = new DateTimeZone('Antarctica/McMurdo');
 
         $organizer = new Organizer(
             'sue@example.com',
@@ -41,24 +41,15 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
 
         $event = new CalendarEvent();
         $event->setUid('lLKjd89283oja89282lkjd8@example.com')
-            ->setStart(new \DateTime('4 October 2013 12:00:00', $timezone))
-            ->setEnd(new \DateTime('4 October 2013 22:00:00', $timezone))
+            ->setStart(new DateTime('4 October 2013 12:00:00', $timezone))
+            ->setEnd(new DateTime('4 October 2013 22:00:00', $timezone))
             ->setSummary('Poker night at the South Pole')
             ->addAttendee($attendee)
             ->setOrganizer($organizer)
             ->setSequence(3)
-            ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+            ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        // @todo fix
-        $rrule = new Rule(new Formatter());
-        $rrule->setFrequency(new Frequency(Frequency::MONTHLY))
-            ->setInterval(2)
-            ->setCount(40)
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 1))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 2))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 3))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 4))
-            ->addByDay(new WeekdayNum(Weekday::FRIDAY, 1));
+        $rrule = new Rule('RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
         $event->setRecurrenceRule($rrule);
 
         //add an alarms to this event
@@ -72,7 +63,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         $alarmDisplay->setAction("display");
         $alarmDisplay->setTrigger($event->getStart());
         $alarmDisplay->setRepeat(3);
-        $alarmDisplay->setDuration(new \DateInterval('PT15M'));
+        $alarmDisplay->setDuration(new DateInterval('PT15M'));
         $alarmDisplay->setDescription("DESCRIPTION");
         $event->addAlarm($alarmDisplay);
 
@@ -89,19 +80,16 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         //test exception dates
         $eventTwo = new CalendarEvent();
         $eventTwo->setUid('eventtwo@example.com')
-            ->setStart(new \DateTime('2 October 2013', $timezone))
+            ->setStart(new DateTime('2 October 2013', $timezone))
             ->setSummary('Every Wednesday event')
-            ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+            ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        // @todo fix
-        $rrule = new Rule(new Formatter());
-        $rrule->setFrequency(new Frequency(Frequency::WEEKLY));
-
+        $rrule = new Rule('RRULE:FREQ=WEEKLY');
         $eventTwo->setRecurrenceRule($rrule);
 
         //add exception dates to the event recurrence
-        $eventTwo->addExceptionDate(new \DateTime('16 October 2013', $timezone))
-            ->addExceptionDate(new \DateTime('30 October 2013', $timezone));
+        $eventTwo->addExceptionDate(new DateTime('16 October 2013', $timezone))
+            ->addExceptionDate(new DateTime('30 October 2013', $timezone));
 
         $cal = new Calendar();
         $cal->setProdId('-//Jsvrcek//ICS//EN')
@@ -110,7 +98,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->addEvent($eventTwo);
 
         //create second calendar using batch event provider
-        $timezone = new \DateTimeZone('Arctic/Longyearbyen');
+        $timezone = new DateTimeZone('Arctic/Longyearbyen');
         $calTwo = new Calendar();
         $calTwo->setProdId('-//Jsvrcek//ICS//EN2')
             ->setTimezone($timezone);
@@ -118,17 +106,17 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         $calTwo->setEventsProvider(function ($start) use ($timezone) {
             $eventOne = new CalendarEvent();
             $eventOne->setUid('asdfasdf@example.com')
-                ->setStart(new \DateTime('2016-01-01 01:01:01', $timezone))
-                ->setEnd(new \DateTime('2016-01-02 01:01:01', $timezone))
+                ->setStart(new DateTime('2016-01-01 01:01:01', $timezone))
+                ->setEnd(new DateTime('2016-01-02 01:01:01', $timezone))
                 ->setSummary('A long day')
-                ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+                ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
             $eventTwo = new CalendarEvent();
             $eventTwo->setUid('asdfasdf@example.com')
-                ->setStart(new \DateTime('2016-01-02 01:01:01', $timezone))
-                ->setEnd(new \DateTime('2016-01-03 01:01:01', $timezone))
+                ->setStart(new DateTime('2016-01-02 01:01:01', $timezone))
+                ->setEnd(new DateTime('2016-01-03 01:01:01', $timezone))
                 ->setSummary('Another long day')
-                ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+                ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
             return ($start > 0) ? array() : array($eventOne, $eventTwo);
         });
@@ -146,7 +134,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStreamUTC()
     {
-        $timezone = new \DateTimeZone('Antarctica/McMurdo');
+        $timezone = new DateTimeZone('Antarctica/McMurdo');
 
         $organizer = new Organizer(
             'sue@example.com',
@@ -167,24 +155,15 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
 
         $event = new CalendarEvent();
         $event->setUid('lLKjd89283oja89282lkjd8@example.com')
-            ->setStart(new \DateTime('4 October 2013 12:00:00', $timezone))
-            ->setEnd(new \DateTime('4 October 2013 22:00:00', $timezone))
+            ->setStart(new DateTime('4 October 2013 12:00:00', $timezone))
+            ->setEnd(new DateTime('4 October 2013 22:00:00', $timezone))
             ->setSummary('Poker night at the South Pole')
             ->addAttendee($attendee)
             ->setOrganizer($organizer)
             ->setSequence(3)
-            ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+            ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        // @todo fix
-        $rrule = new Rule(new Formatter());
-        $rrule->setFrequency(new Frequency(Frequency::MONTHLY))
-            ->setInterval(2)
-            ->setCount(40)
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 1))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 2))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 3))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 4))
-            ->addByDay(new WeekdayNum(Weekday::FRIDAY, 1));
+        $rrule = new Rule('RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
         $event->setRecurrenceRule($rrule);
 
         //add an alarms to this event
@@ -198,7 +177,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         $alarmDisplay->setAction("display");
         $alarmDisplay->setTrigger($event->getStart());
         $alarmDisplay->setRepeat(3);
-        $alarmDisplay->setDuration(new \DateInterval('PT15M'));
+        $alarmDisplay->setDuration(new DateInterval('PT15M'));
         $alarmDisplay->setDescription("DESCRIPTION");
         $event->addAlarm($alarmDisplay);
 
@@ -215,19 +194,16 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         //test exception dates
         $eventTwo = new CalendarEvent();
         $eventTwo->setUid('eventtwo@example.com')
-            ->setStart(new \DateTime('2 October 2013', $timezone))
+            ->setStart(new DateTime('2 October 2013', $timezone))
             ->setSummary('Every Wednesday event')
-            ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+            ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        // @todo fix
-        $rrule = new Rule(new Formatter());
-        $rrule->setFrequency(new Frequency(Frequency::WEEKLY));
-
+        $rrule = new Rule('RRULE:FREQ=WEEKLY');
         $eventTwo->setRecurrenceRule($rrule);
 
         //add exception dates to the event recurrence
-        $eventTwo->addExceptionDate(new \DateTime('16 October 2013', $timezone))
-            ->addExceptionDate(new \DateTime('30 October 2013', $timezone));
+        $eventTwo->addExceptionDate(new DateTime('16 October 2013', $timezone))
+            ->addExceptionDate(new DateTime('30 October 2013', $timezone));
 
         $cal = new Calendar();
         $cal->setProdId('-//Jsvrcek//ICS//EN')
@@ -236,7 +212,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->addEvent($eventTwo);
 
         //create second calendar using batch event provider
-        $timezone = new \DateTimeZone('Arctic/Longyearbyen');
+        $timezone = new DateTimeZone('Arctic/Longyearbyen');
         $calTwo = new Calendar();
         $calTwo->setProdId('-//Jsvrcek//ICS//EN2')
             ->setTimezone($timezone);
@@ -244,17 +220,17 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         $calTwo->setEventsProvider(function ($start) use ($timezone) {
             $eventOne = new CalendarEvent();
             $eventOne->setUid('asdfasdf@example.com')
-                ->setStart(new \DateTime('2016-01-01 01:01:01', $timezone))
-                ->setEnd(new \DateTime('2016-01-02 01:01:01', $timezone))
+                ->setStart(new DateTime('2016-01-01 01:01:01', $timezone))
+                ->setEnd(new DateTime('2016-01-02 01:01:01', $timezone))
                 ->setSummary('A long day')
-                ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+                ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
             $eventTwo = new CalendarEvent();
             $eventTwo->setUid('asdfasdf@example.com')
-                ->setStart(new \DateTime('2016-01-02 01:01:01', $timezone))
-                ->setEnd(new \DateTime('2016-01-03 01:01:01', $timezone))
+                ->setStart(new DateTime('2016-01-02 01:01:01', $timezone))
+                ->setEnd(new DateTime('2016-01-03 01:01:01', $timezone))
                 ->setSummary('Another long day')
-                ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+                ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
             return ($start > 0) ? array() : array($eventOne, $eventTwo);
         });
@@ -273,7 +249,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetStreamTZAndLocal()
     {
-        $timezone = new \DateTimeZone('Antarctica/McMurdo');
+        $timezone = new DateTimeZone('Antarctica/McMurdo');
 
         $organizer = new Organizer(
             'sue@example.com',
@@ -294,24 +270,15 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
 
         $event = new CalendarEvent();
         $event->setUid('lLKjd89283oja89282lkjd8@example.com')
-            ->setStart(new \DateTime('4 October 2013 12:00:00', $timezone))
-            ->setEnd(new \DateTime('4 October 2013 22:00:00', $timezone))
+            ->setStart(new DateTime('4 October 2013 12:00:00', $timezone))
+            ->setEnd(new DateTime('4 October 2013 22:00:00', $timezone))
             ->setSummary('Poker night at the South Pole')
             ->addAttendee($attendee)
             ->setOrganizer($organizer)
             ->setSequence(3)
-            ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+            ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        // @todo fix
-        $rrule = new Rule(new Formatter());
-        $rrule->setFrequency(new Frequency(Frequency::MONTHLY))
-            ->setInterval(2)
-            ->setCount(40)
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 1))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 2))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 3))
-            ->addByDay(new WeekdayNum(Weekday::SATURDAY, 4))
-            ->addByDay(new WeekdayNum(Weekday::FRIDAY, 1));
+        $rrule = new Rule('RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
         $event->setRecurrenceRule($rrule);
 
         //add an alarms to this event
@@ -325,7 +292,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         $alarmDisplay->setAction("display");
         $alarmDisplay->setTrigger($event->getStart());
         $alarmDisplay->setRepeat(3);
-        $alarmDisplay->setDuration(new \DateInterval('PT15M'));
+        $alarmDisplay->setDuration(new DateInterval('PT15M'));
         $alarmDisplay->setDescription("DESCRIPTION");
         $event->addAlarm($alarmDisplay);
 
@@ -342,19 +309,16 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         //test exception dates
         $eventTwo = new CalendarEvent();
         $eventTwo->setUid('eventtwo@example.com')
-            ->setStart(new \DateTime('2 October 2013', $timezone))
+            ->setStart(new DateTime('2 October 2013', $timezone))
             ->setSummary('Every Wednesday event')
-            ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+            ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        // @todo fix
-        $rrule = new Rule(new Formatter());
-        $rrule->setFrequency(new Frequency(Frequency::WEEKLY));
-
+        $rrule = new Rule('RRULE:FREQ=WEEKLY');
         $eventTwo->setRecurrenceRule($rrule);
 
         //add exception dates to the event recurrence
-        $eventTwo->addExceptionDate(new \DateTime('16 October 2013', $timezone))
-            ->addExceptionDate(new \DateTime('30 October 2013', $timezone));
+        $eventTwo->addExceptionDate(new DateTime('16 October 2013', $timezone))
+            ->addExceptionDate(new DateTime('30 October 2013', $timezone));
 
         $cal = new Calendar();
         $cal->setProdId('-//Jsvrcek//ICS//EN')
@@ -363,7 +327,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->addEvent($eventTwo);
 
         //create second calendar using batch event provider
-        $timezone = new \DateTimeZone('Arctic/Longyearbyen');
+        $timezone = new DateTimeZone('Arctic/Longyearbyen');
         $calTwo = new Calendar();
         $calTwo->setProdId('-//Jsvrcek//ICS//EN2')
             ->setTimezone($timezone);
@@ -371,17 +335,17 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
         $calTwo->setEventsProvider(function ($start) use ($timezone) {
             $eventOne = new CalendarEvent();
             $eventOne->setUid('asdfasdf@example.com')
-                ->setStart(new \DateTime('2016-01-01 01:01:01', $timezone))
-                ->setEnd(new \DateTime('2016-01-02 01:01:01', $timezone))
+                ->setStart(new DateTime('2016-01-01 01:01:01', $timezone))
+                ->setEnd(new DateTime('2016-01-02 01:01:01', $timezone))
                 ->setSummary('A long day')
-                ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+                ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
             $eventTwo = new CalendarEvent();
             $eventTwo->setUid('asdfasdf@example.com')
-                ->setStart(new \DateTime('2016-01-02 01:01:01', $timezone))
-                ->setEnd(new \DateTime('2016-01-03 01:01:01', $timezone))
+                ->setStart(new DateTime('2016-01-02 01:01:01', $timezone))
+                ->setEnd(new DateTime('2016-01-03 01:01:01', $timezone))
                 ->setSummary('Another long day')
-                ->setTimestamp(new \DateTime('1 September 2013', $timezone));
+                ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
             return ($start > 0) ? array() : array($eventOne, $eventTwo);
         });
