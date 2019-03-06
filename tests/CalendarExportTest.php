@@ -49,7 +49,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->setSequence(3)
             ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        $rrule = new Rule('RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
+        $rrule = new Rule('FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
         $event->setRecurrenceRule($rrule);
 
         //add an alarms to this event
@@ -84,7 +84,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->setSummary('Every Wednesday event')
             ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        $rrule = new Rule('RRULE:FREQ=WEEKLY');
+        $rrule = new Rule('FREQ=WEEKLY');
         $eventTwo->setRecurrenceRule($rrule);
 
         //add exception dates to the event recurrence
@@ -163,7 +163,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->setSequence(3)
             ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        $rrule = new Rule('RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
+        $rrule = new Rule('FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
         $event->setRecurrenceRule($rrule);
 
         //add an alarms to this event
@@ -198,7 +198,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->setSummary('Every Wednesday event')
             ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        $rrule = new Rule('RRULE:FREQ=WEEKLY');
+        $rrule = new Rule('FREQ=WEEKLY');
         $eventTwo->setRecurrenceRule($rrule);
 
         //add exception dates to the event recurrence
@@ -278,7 +278,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->setSequence(3)
             ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        $rrule = new Rule('RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
+        $rrule = new Rule('FREQ=MONTHLY;INTERVAL=2;COUNT=40;BYDAY=1SA,2SA,3SA,4SA,1FR');
         $event->setRecurrenceRule($rrule);
 
         //add an alarms to this event
@@ -313,7 +313,7 @@ class CalendarExportTest extends \PHPUnit_Framework_TestCase
             ->setSummary('Every Wednesday event')
             ->setTimestamp(new DateTime('1 September 2013', $timezone));
 
-        $rrule = new Rule('RRULE:FREQ=WEEKLY');
+        $rrule = new Rule('FREQ=WEEKLY');
         $eventTwo->setRecurrenceRule($rrule);
 
         //add exception dates to the event recurrence
