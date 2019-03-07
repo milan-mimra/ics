@@ -168,7 +168,11 @@ class CalendarExport
                     ->addItem('DTEND'. $dtEnd);
 
                 if ($event->hasRecurrenceRule() === true && $event->getRecurrenceRule() instanceof Rule) {
-                    $this->stream->addItem('RRULE:'.$event->getRecurrenceRule()->getString());
+                    $this->stream->addItem(
+                        'RRULE:'.$event->getRecurrenceRule()->getString(
+                            Rule::TZ_FIXED
+                        )
+                    );
                 }
 
                 foreach ($event->getExceptionDates() as $date) {
